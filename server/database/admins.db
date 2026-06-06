@@ -1,2 +1,1 @@
-{"name":"Super Admin","email":"parassecuritysystems@gmail.com","password":"$2b$10$QA.NuSwz188ZYQnuxeuKKuu6Jdy8E6mqou7.vncscYK/EOU4cWj6m","role":"superadmin","createdAt":{"$$date":1778860884525},"_id":"abV2VCHAXXcC0spQ"}
-{"name":"Darshan","email":"abc@gmail.com","password":"$2b$10$6swTzeZS1AlHUKOc.Y1uOeOoBwi2iKlzZ5MYfq8hfdFH5macDnvz2","role":"admin","createdAt":{"$$date":1778922386375},"_id":"oagFAcpakovBvWoq"}
+{"name":"Super Admin","email":"parassecuritysystems@gmail.com","password":"$2b$10$v.emgYZUCGm.w2BknzW7cuaES3X/n8.4uC0cju4g6JRdyH92ES6nK","role":"superadmin","createdAt":{"$$date":1780714280581},"_id":"ZymU6fSpAlY7yi25"}
