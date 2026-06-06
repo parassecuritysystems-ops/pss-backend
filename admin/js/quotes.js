@@ -24,7 +24,7 @@ async function loadQuotes() {
   try {
 
     const response = await fetch(
-      "http://localhost:5000/api/admin/quotes",
+      "https://api.parassecurity.in/api/admin/quotes",
       {
         headers: {
           Authorization: `Bearer ${token}`
