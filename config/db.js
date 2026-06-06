@@ -33,7 +33,11 @@ const otpDB = new Datastore({
   autoload: true
 });
 
-console.log("Database Folder:", DB_DIR);
+console.log("DB DIR:", DB_DIR);
+
+adminsDB.find({}, (err, docs) => {
+  console.log("ADMINS ON STARTUP:", docs.length);
+});
 
 module.exports = {
   adminsDB,
