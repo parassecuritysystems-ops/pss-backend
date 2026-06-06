@@ -73,6 +73,12 @@ adminsDB.findOne(
 );
 
 
+const fs = require("fs");
+
+if (!fs.existsSync("./database")) {
+  fs.mkdirSync("./database");
+}
+
 
 // ================= SERVER =================
 
