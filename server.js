@@ -82,22 +82,22 @@ adminsDB.findOne(
   }
 );
 
-router.get("/all-admins", (req, res) => {
-  adminsDB.find({}, (err, docs) => {
-    if (err) {
-      return res.status(500).json({
-        success: false,
-        error: err.message
-      });
-    }
+// router.get("/all-admins", (req, res) => {
+//   adminsDB.find({}, (err, docs) => {
+//     if (err) {
+//       return res.status(500).json({
+//         success: false,
+//         error: err.message
+//       });
+//     }
 
-    res.json({
-      success: true,
-      count: docs.length,
-      admins: docs
-    });
-  });
-});
+//     res.json({
+//       success: true,
+//       count: docs.length,
+//       admins: docs
+//     });
+//   });
+// });
 
 // ================= SERVER =================
 
