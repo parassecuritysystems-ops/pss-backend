@@ -18,7 +18,8 @@ const app = express();
 app.use(cors({
   origin: [
     "https://parassecurity.in",
-    "https://pssadmin.parassecurity.in"
+    "https://pssadmin.parassecurity.in",
+    "https://api.parassecurity.in"
   ],
   credentials: true
 }));
