@@ -4,7 +4,7 @@ async function verifyOTP() {
   const email = localStorage.getItem("resetEmail");
   const otp = document.getElementById("otp").value;
 
-  const response = await fetch("http://localhost:5000/api/auth/verify-otp", {
+  const response = await fetch("https://api.parassecurity.in/api/auth/verify-otp", {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
