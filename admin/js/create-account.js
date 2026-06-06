@@ -6,7 +6,7 @@ async function createAccount() {
 
   try {
 
-    const response = await fetch("http://localhost:5000/api/auth/create-admin", {
+    const response = await fetch("https://api.parassecurity.in/api/auth/create-admin", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
