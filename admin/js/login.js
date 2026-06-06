@@ -8,19 +8,20 @@ loginForm.addEventListener("submit", async (e) => {
 
   const password = document.getElementById("password").value;
 
-  const response = await fetch(
-    "https://api.parassecurity.in/api/auth/login",
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        email,
-        password
-      })
-    }
-  );
+  const response = await fetch("https://api.parassecurity.in/api/auth/create-admin", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    name: "Test Admin",
+    email: "test@gmail.com",
+    password: "123456"
+  })
+})
+.then(res => res.json())
+.then(data => console.log(data))
+.catch(err => console.log(err));
 
   const result = await response.json();
 
