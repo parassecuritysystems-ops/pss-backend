@@ -274,19 +274,17 @@ router.post("/create-admin", async (req, res) => {
 
   try {
 
-    const { name, email, password } = req.body;
+    console.log("BODY:", req.body);
 
-    if (!name || !email || !password) {
-      return res.status(400).json({
-        success: false,
-        message: "All fields are required"
-      });
-    }
+    const { name, email, password } = req.body;
 
     adminsDB.findOne({ email }, async (err, admin) => {
 
+      console.log("findOne err:", err);
+      console.log("existing admin:", admin);
+
       if (admin) {
-        return res.status(400).json({
+        return res.json({
           success: false,
           message: "Admin already exists"
         });
@@ -294,40 +292,37 @@ router.post("/create-admin", async (req, res) => {
 
       const hashedPassword = await bcrypt.hash(password, 10);
 
-      adminsDB.insert(
-        {
-          name,
-          email,
-          password: hashedPassword,
-          role: "admin",
-          createdAt: new Date()
-        },
-        (err, savedAdmin) => {
+      adminsDB.insert({
+        name,
+        email,
+        password: hashedPassword,
+        role: "admin",
+        createdAt: new Date()
+      }, (err, doc) => {
 
-          if (err) {
-            return res.status(500).json({
-              success: false,
-              message: "Database error"
-            });
-          }
+        console.log("INSERT ERR:", err);
+        console.log("INSERT DOC:", doc);
 
-          res.json({
-            success: true,
-            message: "Account created successfully",
-            admin: {
-              id: savedAdmin._id,
-              name: savedAdmin.name,
-              email: savedAdmin.email,
-              role: savedAdmin.role
-            }
+        if (err) {
+          return res.status(500).json({
+            success: false,
+            message: err.message
           });
-
         }
-      );
+
+        return res.json({
+          success: true,
+          message: "Admin created",
+          admin: doc
+        });
+
+      });
 
     });
 
   } catch (error) {
+
+    console.error(error);
 
     res.status(500).json({
       success: false,
@@ -336,5 +331,6 @@ router.post("/create-admin", async (req, res) => {
 
   }
 
+});
 });
 module.exports = router;
