@@ -29,7 +29,7 @@ async function loadContacts() {
   try {
 
     const response = await fetch(
-      "http://localhost:5000/api/admin/contacts",
+      "https://api.parassecurity.in/api/admin/contacts",
       {
         method: "GET",
         headers: {
