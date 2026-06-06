@@ -3,6 +3,7 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const bcrypt = require("bcryptjs");
+const path = require("path");
 
 const { adminsDB } = require("./config/db");
 
@@ -12,13 +13,18 @@ const quoteRoutes = require("./routes/quoteRoutes");
 const chatbotRoutes = require("./routes/chatbotRoutes");
 const adminRoutes = require("./routes/adminRoutes");
 
-
 const app = express();
 
 app.use(cors({
   origin: "http://127.0.0.1:5500",
   credentials: true
 }));
+
+app.use(express.static(path.join(__dirname, "admin")));
+
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "admin", "login.html"));
+});
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
