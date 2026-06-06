@@ -277,17 +277,16 @@ router.post("/create-admin", async (req, res) => {
     const { name, email, password } = req.body;
 
     if (!name || !email || !password) {
-      return res.json({
+      return res.status(400).json({
         success: false,
-        message: "All fields required"
+        message: "All fields are required"
       });
     }
 
-    // check existing admin
     adminsDB.findOne({ email }, async (err, admin) => {
 
       if (admin) {
-        return res.json({
+        return res.status(400).json({
           success: false,
           message: "Admin already exists"
         });
@@ -295,27 +294,47 @@ router.post("/create-admin", async (req, res) => {
 
       const hashedPassword = await bcrypt.hash(password, 10);
 
-      adminsDB.insert({
-        name,
-        email,
-        password: hashedPassword,
-        role: "admin",
-        createdAt: new Date()
-      });
+      adminsDB.insert(
+        {
+          name,
+          email,
+          password: hashedPassword,
+          role: "admin",
+          createdAt: new Date()
+        },
+        (err, savedAdmin) => {
 
-      res.json({
-        success: true,
-        message: "Account created successfully"
-      });
+          if (err) {
+            return res.status(500).json({
+              success: false,
+              message: "Database error"
+            });
+          }
+
+          res.json({
+            success: true,
+            message: "Account created successfully",
+            admin: {
+              id: savedAdmin._id,
+              name: savedAdmin.name,
+              email: savedAdmin.email,
+              role: savedAdmin.role
+            }
+          });
+
+        }
+      );
 
     });
 
-  } catch (err) {
+  } catch (error) {
+
     res.status(500).json({
       success: false,
-      message: err.message
+      message: error.message
     });
-  }
-});
 
+  }
+
+});
 module.exports = router;
