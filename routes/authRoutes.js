@@ -274,49 +274,83 @@ router.post("/create-admin", async (req, res) => {
 
   try {
 
-    console.log("BODY:", req.body);
+    console.log("Request Body:", req.body);
 
     const { name, email, password } = req.body;
 
-    adminsDB.findOne({ email }, async (err, admin) => {
+    if (!name || !email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "All fields are required"
+      });
+    }
 
-      console.log("findOne err:", err);
-      console.log("existing admin:", admin);
+    adminsDB.findOne({ email }, async (err, existingAdmin) => {
 
-      if (admin) {
-        return res.json({
+      if (err) {
+        console.error("Find Error:", err);
+
+        return res.status(500).json({
+          success: false,
+          message: "Database error"
+        });
+      }
+
+      if (existingAdmin) {
+        return res.status(400).json({
           success: false,
           message: "Admin already exists"
         });
       }
 
-      const hashedPassword = await bcrypt.hash(password, 10);
+      try {
 
-      adminsDB.insert({
-        name,
-        email,
-        password: hashedPassword,
-        role: "admin",
-        createdAt: new Date()
-      }, (err, doc) => {
+        const hashedPassword = await bcrypt.hash(password, 10);
 
-        console.log("INSERT ERR:", err);
-        console.log("INSERT DOC:", doc);
+        const newAdmin = {
+          name,
+          email,
+          password: hashedPassword,
+          role: "admin",
+          createdAt: new Date()
+        };
 
-        if (err) {
-          return res.status(500).json({
-            success: false,
-            message: err.message
+        adminsDB.insert(newAdmin, (err, savedAdmin) => {
+
+          if (err) {
+            console.error("Insert Error:", err);
+
+            return res.status(500).json({
+              success: false,
+              message: "Failed to create admin"
+            });
+          }
+
+          console.log("Admin Created:", savedAdmin);
+
+          return res.status(201).json({
+            success: true,
+            message: "Admin created successfully",
+            admin: {
+              id: savedAdmin._id,
+              name: savedAdmin.name,
+              email: savedAdmin.email,
+              role: savedAdmin.role
+            }
           });
-        }
 
-        return res.json({
-          success: true,
-          message: "Admin created",
-          admin: doc
         });
 
-      });
+      } catch (hashError) {
+
+        console.error(hashError);
+
+        return res.status(500).json({
+          success: false,
+          message: "Password hashing failed"
+        });
+
+      }
 
     });
 
@@ -324,7 +358,7 @@ router.post("/create-admin", async (req, res) => {
 
     console.error(error);
 
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: error.message
     });
@@ -332,4 +366,5 @@ router.post("/create-admin", async (req, res) => {
   }
 
 });
+
 module.exports = router;
