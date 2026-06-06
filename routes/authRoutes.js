@@ -84,54 +84,49 @@ router.post("/register", async (req, res) => {
 
 router.post("/login", async (req, res) => {
 
-  try {
+  const { email, password } = req.body;
 
-    const { email, password } = req.body;
+  adminsDB.findOne({ email }, async (err, admin) => {
 
-    adminsDB.findOne({ email }, async (err, admin) => {
-
-      if (!admin) {
-        return res.status(400).json({
-          success: false,
-          message: "Invalid email"
-        });
-      }
-
-      const isMatch = await bcrypt.compare(password, admin.password);
-
-      if (!isMatch) {
-        return res.status(400).json({
-          success: false,
-          message: "Invalid password"
-        });
-      }
-
-      const token = generateToken(admin);
-
-      res.json({
-        success: true,
-        message: "Login successful",
-        token,
-        admin: {
-          id: admin._id,
-          name: admin.name,
-          email: admin.email
-        }
+    if (err || !admin) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid email"
       });
+    }
 
+    if (!admin.password) {
+      return res.status(400).json({
+        success: false,
+        message: "Corrupted user data"
+      });
+    }
+
+    const isMatch = await bcrypt.compare(password, admin.password);
+
+    if (!isMatch) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid password"
+      });
+    }
+
+    const token = generateToken(admin);
+
+    return res.json({
+      success: true,
+      token,
+      admin: {
+        id: admin._id,
+        name: admin.name,
+        email: admin.email,
+        role: admin.role
+      }
     });
 
-  } catch (error) {
-
-    res.status(500).json({
-      success: false,
-      message: error.message
-    });
-
-  }
+  });
 
 });
-
 
 
 // ================= FORGOT PASSWORD =================
