@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin Login</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --primary: #65b530;
+      --primary-dark: #4f8f25;
+      --bg1: #061a10;
+      --bg2: #0b3d1a;
+      --card: rgba(255, 255, 255, 0.10);
+      --border: rgba(255, 255, 255, 0.18);
+      --text: #ffffff;
+      --muted: rgba(255, 255, 255, 0.75);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Roboto", sans-serif;
+    }
+
+    body {
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: radial-gradient(circle at top, #0c3d1f, #04140b);
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* background glow blobs */
+    body::before,
+    body::after {
+      content: "";
+      position: absolute;
+      width: 420px;
+      height: 420px;
+      background: var(--primary);
+      opacity: 0.15;
+      border-radius: 50%;
+      filter: blur(80px);
+    }
+
+    body::before {
+      top: -120px;
+      left: -120px;
+    }
+
+    body::after {
+      bottom: -150px;
+      right: -150px;
+    }
+
+    /* LOGIN CARD */
+    .login-container {
+      width: 390px;
+      padding: 32px;
+      border-radius: 18px;
+      background: var(--card);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid var(--border);
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.45);
+      color: var(--text);
+      text-align: center;
+      z-index: 2;
+    }
+
+    /* logo */
+    .logo {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 18px;
+      color: var(--primary);
+    }
+
+    .title {
+      font-size: 22px;
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+
+    /* inputs */
+    input {
+      width: 100%;
+      padding: 13px 14px;
+      margin-bottom: 14px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      background: rgba(255, 255, 255, 0.08);
+      color: white;
+      outline: none;
+      transition: 0.2s;
+    }
+
+    input::placeholder {
+      color: var(--muted);
+    }
+
+    input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(101, 181, 48, 0.2);
+    }
+
+    /* button */
+    button {
+      width: 100%;
+      padding: 13px;
+      border: none;
+      border-radius: 10px;
+      background: var(--primary);
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.25s;
+      margin-top: 6px;
+    }
+
+    button:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(101, 181, 48, 0.25);
+    }
+
+    /* forgot */
+    .forgot {
+      display: block;
+      margin-top: 12px;
+      font-size: 13px;
+      color: var(--muted);
+      text-decoration: none;
+    }
+
+    .forgot:hover {
+      color: white;
+    }
+
+    /* social */
+    .social {
+      margin-top: 18px;
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    .social div {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.08);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      transition: 0.2s;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .social div:hover {
+      transform: translateY(-2px);
+      border-color: var(--primary);
+    }
+
+    /* footer */
+    .footer {
+      margin-top: 12px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .footer span {
+      color: var(--primary);
+      cursor: pointer;
+    }
+
+    a {
+      color: var(--primary);
+      text-decoration: none;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="login-container">
+
+    <div class="logo">PSS Admin Panel</div>
+
+    <div class="title">Login</div>
+
+    <form id="loginForm">
+      <input type="email" id="email" placeholder="username@gmail.com" required>
+      <input type="password" id="password" placeholder="Password" required>
+
+      <button type="submit">Sign in</button>
+    </form>
+
+    <a class="forgot" href="forgot-password.html">Forgot Password?</a>
+
+    <div class="social">
+      <div>G</div>
+      <div>GH</div>
+      <div>f</div>
+    </div>
+
+    <div class="footer">
+      Don’t have an account? <a href="create-account.html">Create One!</a>
+    </div>
+
+  </div>
+
+  <script src="js/login.js"></script>
+
+</body>
+
+</html>

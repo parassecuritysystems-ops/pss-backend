@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Dashboard</title>
+
+    <link rel="stylesheet" href="css/admin.css">
+    <!-- IMPORTANT -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <h2>PSS Admin Panel</h2>
+
+        <a href="dashboard.html" class="active">Dashboard</a>
+        <a href="contacts.html">Contacts</a>
+        <a href="quotes.html">Quotes</a>
+        <a href="chatbot.html">Chatbot Logs</a>
+        <a href="admins.html">Admins</a>
+    </div>
+
+    <!-- MAIN -->
+    <div class="main">
+
+        <!-- TOPBAR WITH USER + LOGOUT -->
+        <div class="topbar">
+            <h2>Dashboard Overview</h2>
+
+            <div style="display:flex; align-items:center; gap:12px;">
+
+                <div id="userBox" style="
+          background: rgba(255,255,255,0.15);
+          padding: 6px 12px;
+          border-radius: 10px;
+          font-size: 14px;
+        ">
+                    👤 <span id="username">Admin</span>
+                </div>
+
+                <button class="btn" onclick="logout()">Logout</button>
+
+            </div>
+        </div>
+
+        <!-- KPI -->
+        <div class="kpi-grid">
+
+            <div class="kpi-card">
+                <div class="kpi-title">Contacts</div>
+                <div class="kpi-value" id="contactsCount">0</div>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-title">Quotes</div>
+                <div class="kpi-value" id="quotesCount">0</div>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-title">Chatbot</div>
+                <div class="kpi-value" id="chatbotCount">0</div>
+            </div>
+
+        </div>
+
+        <!-- CHARTS -->
+        <div class="chart-grid">
+
+            <div class="chart-box">
+                <canvas id="barChart"></canvas>
+            </div>
+
+            <div class="chart-box">
+                <canvas id="pieChart"></canvas>
+            </div>
+
+        </div>
+
+        <!-- ACTIVITY -->
+        <div class="card">
+            <h3>📊 Live Activity Feed</h3>
+            <div id="activityFeed"></div>
+        </div>
+
+        <!-- TABLES -->
+        <div class="chart-grid">
+
+            <div class="table-box">
+                <h3>📩 Recent Contacts</h3>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                        </tr>
+                    </thead>
+                    <tbody id="contactsTable"></tbody>
+                </table>
+            </div>
+
+            <div class="table-box">
+                <h3>💬 Quotes Requests</h3>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Message</th>
+                        </tr>
+                    </thead>
+                    <tbody id="quotesTable"></tbody>
+                </table>
+            </div>
+
+        </div>
+
+        <div class="table-box" style="margin-top:18px;">
+            <h3>🤖 Chatbot Logs</h3>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>User Input</th>
+                    </tr>
+                </thead>
+                <tbody id="chatbotTable"></tbody>
+            </table>
+        </div>
+
+    </div>
+
+    <!-- SCRIPT -->
+    <script src="js/dashboard.js"></script>
+
+    <script>
+        // ================= AUTH GUARD =================
+        const token = localStorage.getItem("token");
+
+        if (!token) {
+            window.location.href = "login.html";
+        }
+
+        // ================= LOAD USER =================
+        function loadUser() {
+            const username = localStorage.getItem("username");
+            document.getElementById("username").innerText = username || "Admin";
+        }
+
+        loadUser();
+
+        // ================= LOGOUT =================
+        function logout() {
+            localStorage.removeItem("token");
+            localStorage.removeItem("username");
+
+            alert("Logged out successfully");
+            window.location.href = "login.html";
+        }
+    </script>
+
+</body>
+
+
+</html>

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Chatbot Logs</title>
+
+  <link rel="stylesheet" href="css/admin.css">
+
+  <style>
+    /* =========================
+   NEW BADGE
+========================= */
+
+    .new-badge {
+      background: #ef4444;
+      color: white;
+      font-size: 10px;
+      padding: 3px 7px;
+      border-radius: 20px;
+      margin-left: 8px;
+      font-weight: 600;
+    }
+
+    /* =========================
+   PAGINATION
+========================= */
+
+    .pagination {
+      margin-top: 20px;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .page-btn {
+      border: none;
+      padding: 10px 14px;
+      border-radius: 8px;
+      background: white;
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .page-btn:hover {
+      background: rgba(34, 197, 94, 0.1);
+    }
+
+    .active-page {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    .page-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  </style>
+
+</head>
+
+<body>
+
+  <div class="sidebar">
+    <h2>PSS Admin Panel</h2>
+
+    <a href="dashboard.html">Dashboard</a>
+    <a href="contacts.html">Contacts</a>
+    <a href="quotes.html">Quotes</a>
+    <a href="chatbot.html" class="active">Chatbot Logs</a>
+    <a href="admins.html">Admins</a>
+  </div>
+
+  <div class="main">
+
+    <div class="topbar">
+      <h2>Chatbot Conversations</h2>
+    </div>
+
+    <div class="table-container">
+
+      <table>
+
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Phone</th>
+            <th>Interest</th>
+            <th>Message</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+
+        <tbody id="chatbotTable"></tbody>
+
+      </table>
+
+      <div class="pagination" id="pagination"></div>
+
+    </div>
+
+  </div>
+
+  <script src="js/chatbot.js"></script>
+
+</body>
+
+</html>

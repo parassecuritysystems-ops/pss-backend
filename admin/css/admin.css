@@ -1,0 +1,231 @@
+/* =========================
+   CLEAN GREEN ADMIN SYSTEM
+   UNIFIED + FIXED LAYOUT
+========================= */
+
+:root {
+  --primary: #22c55e;
+  --primary-dark: #16a34a;
+
+  --bg: #f4f6fb;
+  --card: #ffffff;
+  --text: #0f172a;
+  --muted: #64748b;
+  --border: #e5e7eb;
+}
+
+/* ================= RESET ================= */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Roboto", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  display: flex;
+}
+
+/* ================= SIDEBAR (FINAL FIXED VERSION) ================= */
+.sidebar {
+  width: 260px;
+  height: 100vh;
+  position: fixed;
+  left: 0;
+  top: 0;
+  background: #fff;
+  border-right: 1px solid var(--border);
+  padding: 20px;
+  z-index: 10;
+}
+
+.sidebar h2 {
+  color: var(--primary);
+  margin-bottom: 25px;
+  /* font-size: 20px; */
+}
+
+.sidebar a {
+  display: block;
+  padding: 12px;
+  margin-bottom: 8px;
+  border-radius: 10px;
+  text-decoration: none;
+  color: var(--muted);
+  transition: 0.2s;
+}
+
+.sidebar a:hover {
+  background: rgba(34, 197, 94, 0.12);
+  color: var(--primary);
+  transform: translateX(4px);
+}
+
+/* ================= MAIN ================= */
+.main {
+  margin-left: 260px;
+  width: calc(100% - 260px);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ================= TOPBAR ================= */
+.topbar {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: white;
+  padding: 18px 22px;
+  border-radius: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.topbar h1,
+.topbar h2 {
+  margin: 0;
+  font-size: 20px;
+}
+
+/* ================= TABLE CONTAINER ================= */
+.table-container {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 18px;
+  overflow-x: auto;
+}
+
+/* ================= TABLE GLOBAL ================= */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+thead {
+  background: #f8fafc;
+}
+
+th {
+  text-align: left;
+  padding: 14px;
+  font-size: 12px;
+  text-transform: uppercase;
+  color: var(--muted);
+  border-bottom: 1px solid var(--border);
+}
+
+td {
+  padding: 14px;
+  border-bottom: 1px solid var(--border);
+}
+
+tr:hover {
+  background: rgba(34, 197, 94, 0.06);
+}
+
+/* ================= BUTTON ================= */
+.btn {
+  background: var(--primary);
+  color: white;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: 0.2s;
+}
+
+.btn:hover {
+  background: var(--primary-dark);
+  transform: translateY(-2px);
+}
+
+/* ================= KPI GRID (optional dashboard) ================= */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+
+.kpi-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 18px;
+}
+
+.kpi-title {
+  font-size: 12px;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+.kpi-value {
+  font-size: 28px;
+  font-weight: bold;
+  color: var(--primary);
+  margin-top: 8px;
+}
+
+/* ================= CHART GRID ================= */
+.chart-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 18px;
+}
+
+.chart-box {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 18px;
+  min-height: 300px;
+}
+
+/* ================= RESPONSIVE ================= */
+@media (max-width: 900px) {
+  .sidebar {
+    position: relative;
+    width: 100%;
+    height: auto;
+  }
+
+  .main {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .kpi-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .chart-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ACTIVE SIDEBAR LINK */
+
+.sidebar a.active {
+  background: rgba(34, 197, 94, 0.14);
+  color: var(--primary);
+  font-weight: 600;
+  border-left: 4px solid var(--primary);
+}
+
+/* ================= LOGOUT BUTTON ================= */
+
+.topbar .btn {
+  transition: 0.2s ease;
+}
+
+.topbar .btn:hover {
+  background: #ef4444 !important;
+  color: #ffffff !important;
+  border: 1px solid #ef4444 !important;
+}
