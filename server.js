@@ -82,13 +82,22 @@ adminsDB.findOne(
   }
 );
 
+router.get("/all-admins", (req, res) => {
+  adminsDB.find({}, (err, docs) => {
+    if (err) {
+      return res.status(500).json({
+        success: false,
+        error: err.message
+      });
+    }
 
-const fs = require("fs");
-
-if (!fs.existsSync("./database")) {
-  fs.mkdirSync("./database");
-}
-
+    res.json({
+      success: true,
+      count: docs.length,
+      admins: docs
+    });
+  });
+});
 
 // ================= SERVER =================
 
