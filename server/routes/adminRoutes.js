@@ -1,14 +1,16 @@
 const express = require("express");
 const router = express.Router();
 
-const { google } = require("googleapis");
-
 const authMiddleware = require("../middleware/authMiddleware");
 
 // ================= GOOGLE SHEETS =================
 
+const { google } = require("googleapis");
+
+const credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS);
+
 const auth = new google.auth.GoogleAuth({
-  keyFile: "credentials.json",
+  credentials,
   scopes: ["https://www.googleapis.com/auth/spreadsheets"]
 });
 
