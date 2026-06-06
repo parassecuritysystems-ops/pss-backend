@@ -23,7 +23,7 @@ async function loadChatbot() {
 
   try {
 
-    const response = await fetch("http://localhost:5000/api/admin/chatbot", {
+    const response = await fetch("https://api.parassecurity.in/api/admin/chatbot", {
       headers: {
         Authorization: `Bearer ${token}`
       }
