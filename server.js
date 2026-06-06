@@ -3,7 +3,6 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const bcrypt = require("bcryptjs");
-const path = require("path");
 
 const { adminsDB } = require("./config/db");
 
@@ -15,29 +14,49 @@ const adminRoutes = require("./routes/adminRoutes");
 
 const app = express();
 
-app.use(cors({
-  origin: [
-    "https://parassecurity.in",
-    "https://pssadmin.parassecurity.in",
-    "https://api.parassecurity.in"
-  ],
-  credentials: true
-}));
 
-app.use(express.static(path.join(__dirname, "admin")));
+// ================= DUMMY ADMIN CHECK =================
 
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "admin", "login.html"));
-});
+(async () => {
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+  const existing = await new Promise((resolve) => {
+    adminsDB.findOne(
+      { email: "test@gmail.com" },
+      (err, doc) => resolve(doc)
+    );
+  });
+
+  if (!existing) {
+
+    const hashedPassword = await bcrypt.hash("123456", 10);
+
+    adminsDB.insert({
+      name: "Test Admin",
+      email: "test@gmail.com",
+      password: hashedPassword,
+      role: "admin",
+      createdAt: new Date()
+    });
+
+    console.log("✅ Dummy admin created");
+
+  } else {
+
+    console.log("✅ Dummy admin already exists");
+
+  }
+
+})();
 
 
 // ================= MIDDLEWARE =================
 
-app.use(express.json());
+app.use(cors({
+  origin: "http://127.0.0.1:5500",
+  credentials: true
+}));
 
+app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 
