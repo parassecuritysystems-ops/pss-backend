@@ -4,13 +4,13 @@ const router = express.Router();
 const bcrypt = require("bcryptjs");
 const nodemailer = require("nodemailer");
 
-const { adminsDB, otpDB } = require("../config/db");
+const Admin = require("../models/Admin");
+const Otp = require("../models/Otp");
 
 const generateOTP = require("../utils/otpGenerator");
 const generateToken = require("../utils/jwtGenerator");
 
 require("dotenv").config();
-
 
 
 // ================= REGISTER ADMIN =================
@@ -28,43 +28,30 @@ router.post("/register", async (req, res) => {
       });
     }
 
-    adminsDB.findOne({ email }, async (err, admin) => {
+    const admin = await Admin.findOne({ email });
 
-      if (admin) {
-        return res.status(400).json({
-          success: false,
-          message: "Admin already exists"
-        });
-      }
-
-      const hashedPassword = await bcrypt.hash(password, 10);
-
-      const newAdmin = {
-        name,
-        email,
-        password: hashedPassword,
-        createdAt: new Date()
-      };
-
-      adminsDB.insert(newAdmin, (err, savedAdmin) => {
-
-        if (err) {
-          return res.status(500).json({
-            success: false,
-            message: "Database error"
-          });
-        }
-
-        const token = generateToken(savedAdmin);
-
-        res.json({
-          success: true,
-          message: "Admin registered successfully",
-          token
-        });
-
+    if (admin) {
+      return res.status(400).json({
+        success: false,
+        message: "Admin already exists"
       });
+    }
 
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const savedAdmin = await Admin.create({
+      name,
+      email,
+      password: hashedPassword,
+      createdAt: new Date()
+    });
+
+    const token = generateToken(savedAdmin);
+
+    res.json({
+      success: true,
+      message: "Admin registered successfully",
+      token
     });
 
   } catch (error) {
@@ -79,16 +66,17 @@ router.post("/register", async (req, res) => {
 });
 
 
-
 // ================= LOGIN =================
 
 router.post("/login", async (req, res) => {
 
-  const { email, password } = req.body;
+  try {
 
-  adminsDB.findOne({ email }, async (err, admin) => {
+    const { email, password } = req.body;
 
-    if (err || !admin) {
+    const admin = await Admin.findOne({ email });
+
+    if (!admin) {
       return res.status(400).json({
         success: false,
         message: "Invalid email"
@@ -102,7 +90,10 @@ router.post("/login", async (req, res) => {
       });
     }
 
-    const isMatch = await bcrypt.compare(password, admin.password);
+    const isMatch = await bcrypt.compare(
+      password,
+      admin.password
+    );
 
     if (!isMatch) {
       return res.status(400).json({
@@ -124,7 +115,14 @@ router.post("/login", async (req, res) => {
       }
     });
 
-  });
+  } catch (error) {
+
+    return res.status(500).json({
+      success: false,
+      message: error.message
+    });
+
+  }
 
 });
 
@@ -137,56 +135,52 @@ router.post("/forgot-password", async (req, res) => {
 
     const { email } = req.body;
 
-    adminsDB.findOne({ email }, async (err, admin) => {
+    const admin = await Admin.findOne({ email });
 
-      if (!admin) {
-        return res.status(404).json({
-          success: false,
-          message: "Admin not found"
-        });
+    if (!admin) {
+      return res.status(404).json({
+        success: false,
+        message: "Admin not found"
+      });
+    }
+
+    const otp = generateOTP();
+
+    await Otp.create({
+      email,
+      otp: String(otp)
+    });
+
+    /*
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS
       }
+    });
 
-      const otp = generateOTP();
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: "OTP for Password Reset",
+      html: `<h1>${otp}</h1>`
+    });
+    */
 
-      // save OTP in DB
-      otpDB.insert({
-        email,
-        otp: String(otp),
-        createdAt: new Date()
-      });
-
-      // ================= EMAIL LOGIC (COMMENTED FOR FUTURE) =================
-      /*
-      const transporter = nodemailer.createTransport({
-        service: "gmail",
-        auth: {
-          user: process.env.EMAIL_USER,
-          pass: process.env.EMAIL_PASS
-        }
-      });
-
-      await transporter.sendMail({
-        from: process.env.EMAIL_USER,
-        to: email,
-        subject: "OTP for Password Reset",
-        html: `<h1>${otp}</h1>`
-      });
-      */
-
-      // ================= RETURN OTP FOR POPUP =================
-      return res.json({
-        success: true,
-        message: "OTP generated successfully",
-        otp // ⚠️ ONLY FOR DEVELOPMENT
-      });
-
+    return res.json({
+      success: true,
+      message: "OTP generated successfully",
+      otp
     });
 
   } catch (error) {
+
     res.status(500).json({
       success: false,
       message: error.message
     });
+
   }
 
 });
@@ -194,11 +188,16 @@ router.post("/forgot-password", async (req, res) => {
 
 // ================= VERIFY OTP =================
 
-router.post("/verify-otp", (req, res) => {
+router.post("/verify-otp", async (req, res) => {
 
-  const { email, otp } = req.body;
+  try {
 
-  otpDB.findOne({ email, otp }, (err, record) => {
+    const { email, otp } = req.body;
+
+    const record = await Otp.findOne({
+      email,
+      otp
+    });
 
     if (!record) {
       return res.status(400).json({
@@ -211,9 +210,17 @@ router.post("/verify-otp", (req, res) => {
       success: true,
       message: "OTP verified"
     });
-  });
-});
 
+  } catch (error) {
+
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+
+  }
+
+});
 
 
 // ================= RESET PASSWORD =================
@@ -224,138 +231,94 @@ router.post("/reset-password", async (req, res) => {
 
     const { email, otp, newPassword } = req.body;
 
-    otpDB.findOne({ email, otp }, async (err, record) => {
+    const record = await Otp.findOne({
+      email,
+      otp
+    });
 
-      if (!record) {
-        return res.status(400).json({
-          success: false,
-          message: "Invalid or expired OTP"
-        });
-      }
+    if (!record) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid or expired OTP"
+      });
+    }
 
-      const hashedPassword = await bcrypt.hash(newPassword, 10);
+    const hashedPassword = await bcrypt.hash(
+      newPassword,
+      10
+    );
 
-      adminsDB.update(
-        { email },
-        { $set: { password: hashedPassword } },
-        {},
-        (err) => {
-
-          if (err) {
-            return res.status(500).json({
-              success: false,
-              message: "Password reset failed"
-            });
-          }
-
-          // remove OTP after success
-          otpDB.remove({ email, otp }, { multi: true });
-
-          res.json({
-            success: true,
-            message: "Password updated successfully"
-          });
-
+    await Admin.updateOne(
+      { email },
+      {
+        $set: {
+          password: hashedPassword
         }
-      );
+      }
+    );
 
+    await Otp.deleteMany({
+      email,
+      otp
+    });
+
+    res.json({
+      success: true,
+      message: "Password updated successfully"
     });
 
   } catch (error) {
+
     res.status(500).json({
       success: false,
       message: error.message
     });
+
   }
+
 });
 
-// ================= CREATE ADMIN =================
-router.post("/create-admin", async (req, res) => {
 
+// ================= CREATE ADMIN =================
+
+router.post("/create-admin", async (req, res) => {
   try {
 
-    console.log("Request Body:", req.body);
+    console.log("===== CREATE ADMIN =====");
+    console.log("BODY:", req.body);
 
     const { name, email, password } = req.body;
 
-    if (!name || !email || !password) {
-      return res.status(400).json({
+    const existingAdmin = await Admin.findOne({ email });
+
+    console.log("EXISTING:", existingAdmin);
+
+    if (existingAdmin) {
+      return res.json({
         success: false,
-        message: "All fields are required"
+        message: "Admin already exists"
       });
     }
 
-    adminsDB.findOne({ email }, async (err, existingAdmin) => {
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-      if (err) {
-        console.error("Find Error:", err);
+    const savedAdmin = await Admin.create({
+      name,
+      email,
+      password: hashedPassword,
+      role: "admin"
+    });
 
-        return res.status(500).json({
-          success: false,
-          message: "Database error"
-        });
-      }
+    console.log("SAVED:", savedAdmin);
 
-      if (existingAdmin) {
-        return res.status(400).json({
-          success: false,
-          message: "Admin already exists"
-        });
-      }
-
-      try {
-
-        const hashedPassword = await bcrypt.hash(password, 10);
-
-        const newAdmin = {
-          name,
-          email,
-          password: hashedPassword,
-          role: "admin",
-          createdAt: new Date()
-        };
-
-        adminsDB.insert(newAdmin, (err, savedAdmin) => {
-
-          if (err) {
-            console.error("Insert Error:", err);
-
-            return res.status(500).json({
-              success: false,
-              message: "Failed to create admin"
-            });
-          }
-
-          console.log("Admin Created:", savedAdmin);
-
-          return res.status(201).json({
-            success: true,
-            message: "Admin created successfully",
-            admin: {
-              id: savedAdmin._id,
-              name: savedAdmin.name,
-              email: savedAdmin.email,
-              role: savedAdmin.role
-            }
-          });
-
-        });
-
-      } catch (hashError) {
-
-        console.error(hashError);
-
-        return res.status(500).json({
-          success: false,
-          message: "Password hashing failed"
-        });
-
-      }
-
+    return res.json({
+      success: true,
+      message: "Account created successfully"
     });
 
   } catch (error) {
 
+    console.error("CREATE ADMIN ERROR:");
     console.error(error);
 
     return res.status(500).json({
@@ -364,7 +327,6 @@ router.post("/create-admin", async (req, res) => {
     });
 
   }
-
 });
 
 module.exports = router;

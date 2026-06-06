@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const authMiddleware = require("../middleware/authMiddleware");
+const Admin = require("../models/Admin");
 
 // ================= GOOGLE SHEETS =================
 
@@ -29,8 +30,9 @@ const CHATBOT_SHEET_ID = "1dqvP_2hiBpdGb7uXA_XQHg80NQOGnJ1aidSGF6ZeOwY";
 
 router.get("/contacts", authMiddleware, async (req, res) => {
   try {
+
     const response = await sheets.spreadsheets.values.get({
-      spreadsheetId: "1Fi-L7ialt_xftaWfFtqY0aiMTToNWyYwvcCbsb4GUnA",
+      spreadsheetId: CONTACT_SHEET_ID,
       range: "Sheet1!A:F"
     });
 
@@ -45,11 +47,18 @@ router.get("/contacts", authMiddleware, async (req, res) => {
       message: r[5]
     }));
 
-    res.json({ success: true, data });
+    res.json({
+      success: true,
+      data
+    });
 
   } catch (err) {
-    console.log(err);
-    res.status(500).json({ success: false, message: err.message });
+
+    res.status(500).json({
+      success: false,
+      message: err.message
+    });
+
   }
 });
 
@@ -57,9 +66,10 @@ router.get("/contacts", authMiddleware, async (req, res) => {
 
 router.get("/quotes", authMiddleware, async (req, res) => {
   try {
+
     const response = await sheets.spreadsheets.values.get({
-      spreadsheetId: "1S7Aj0Xuw2kpan1BRwwzsF9ORtMRp4ecIxl7AiT0v7_c",
-      range: "Sheet1!A:J"  
+      spreadsheetId: QUOTE_SHEET_ID,
+      range: "Sheet1!A:J"
     });
 
     const rows = response.data.values || [];
@@ -77,13 +87,18 @@ router.get("/quotes", authMiddleware, async (req, res) => {
       systemInterest: r[9] || ""
     }));
 
-    res.json({ success: true, data });
+    res.json({
+      success: true,
+      data
+    });
 
   } catch (err) {
+
     res.status(500).json({
       success: false,
       message: err.message
     });
+
   }
 });
 
@@ -91,8 +106,9 @@ router.get("/quotes", authMiddleware, async (req, res) => {
 
 router.get("/chatbot", authMiddleware, async (req, res) => {
   try {
+
     const response = await sheets.spreadsheets.values.get({
-      spreadsheetId: "1dqvP_2hiBpdGb7uXA_XQHg80NQOGnJ1aidSGF6ZeOwY",
+      spreadsheetId: CHATBOT_SHEET_ID,
       range: "Sheet1!A:E"
     });
 
@@ -106,51 +122,64 @@ router.get("/chatbot", authMiddleware, async (req, res) => {
       date: r[4]
     }));
 
-    res.json({ success: true, data });
+    res.json({
+      success: true,
+      data
+    });
 
   } catch (err) {
+
     res.status(500).json({
       success: false,
       message: err.message
     });
+
   }
 });
+
+// ================= SUPER ADMIN CHECK =================
 
 router.post("/super-check", (req, res) => {
 
   const { password } = req.body;
 
   if (password === process.env.SUPER_PASSWORD) {
-    return res.json({ success: true });
+    return res.json({
+      success: true
+    });
   }
 
-  res.status(401).json({ success: false, message: "Invalid password" });
+  res.status(401).json({
+    success: false,
+    message: "Invalid password"
+  });
+
 });
 
+// ================= GET ALL ADMINS =================
+
 router.get("/admins", authMiddleware, async (req, res) => {
+
   try {
 
-    const { adminsDB } = require("../config/db");
+    const admins = await Admin.find()
+      .select("-password")
+      .sort({ createdAt: -1 });
 
-    adminsDB.find({}, (err, docs) => {
-      if (err) {
-        return res.status(500).json({
-          success: false,
-          message: err.message
-        });
-      }
-
-      res.json({
-        success: true,
-        admins: docs
-      });
+    res.json({
+      success: true,
+      admins
     });
 
   } catch (err) {
+
     res.status(500).json({
       success: false,
       message: err.message
     });
+
   }
+
 });
+
 module.exports = router;
