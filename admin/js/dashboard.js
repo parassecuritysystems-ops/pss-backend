@@ -1,7 +1,7 @@
 
 document.addEventListener("DOMContentLoaded", async () => {
 
-  const API_BASE = "http://localhost:5000"; // change if deployed
+  const API_BASE = "https://api.parassecurity.in"; // change if deployed
 
   let contacts = [];
   let quotes = [];
@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   
 async function fetchData() {
 
-  const API = "http://localhost:5000/api/admin";
+  const API = "https://api.parassecurity.in/api/admin";
   const token = localStorage.getItem("token");
 
   try {
