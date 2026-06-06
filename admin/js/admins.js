@@ -13,7 +13,7 @@ async function loadAdmins() {
   try {
 
     const response = await fetch(
-      "http://localhost:5000/api/admin/admins",
+      "https://api.parassecurity.in/api/admin/admins",
       {
         method: "GET",
         headers: {
@@ -164,7 +164,7 @@ function checkSuperPassword() {
 
   if (!pass) return;
 
-  fetch("http://localhost:5000/api/admin/super-check", {
+  fetch("https://api.parassecurity.in/api/admin/super-check", {
 
     method: "POST",
 
