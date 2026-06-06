@@ -16,7 +16,10 @@ const adminRoutes = require("./routes/adminRoutes");
 const app = express();
 
 app.use(cors({
-  origin: "http://127.0.0.1:5500",
+  origin: [
+    "https://parassecurity.in",
+    "https://pssadmin.parassecurity.in"
+  ],
   credentials: true
 }));
 
